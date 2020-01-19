@@ -1,0 +1,9 @@
+move os partition to USB - leave boot on SD card
+set SD card to read only
+enable zram function to reduce writes to filesystem
+set adstest.py to run as a service when raspi is started
+setup real time clock - chrony
+add button and trigger shutdown script
+fix usb stick issue
+set up the wifi access point
+create unique file with each record button press
