@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import subprocess
+import os
 import time                        #used to get sleep and timestamp for filename
 from datetime import datetime      #used to get microsecond timestamps
 import csv
@@ -34,8 +35,8 @@ class FileOp:
 fo = FileOp()
 
 
-# GPIO Button Handler
-def button_callback(channel):
+# GPIO Record Button Handler
+def rec_btn_callback(channel):
 	global x
 	global fo
 	if x == False:
@@ -49,14 +50,18 @@ def button_callback(channel):
 		GPIO.output(17,GPIO.LOW)               #Turn off recording indicator LED
 		x = False
 
+def shutdown_btn_callback(chnl):
+	os.system("shutdown now -h")                   #Turn off the Rasp
+
 # GPIO Access
 GPIO.setwarnings(False)                                #Ignore Warnings
 GPIO.setmode(GPIO.BCM)                                 #Use BCM Pin Numbering
 GPIO.setup(17, GPIO.OUT)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)    # Set (GPIO18) for input and pulled low
+GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)    # Set (Pin 18 / GPIO24) for triggering a shutdown
 
-GPIO.add_event_detect(18,GPIO.RISING, callback=button_callback, bouncetime=300)  #Setup
-
+GPIO.add_event_detect(18,GPIO.RISING, callback=rec_btn_callback, bouncetime=300)         # Record button
+GPIO.add_event_detect(24,GPIO.RISING, callback=shutdown_btn_callback, bouncetime=300)    # Shutdown button 
 
 # Create the I2C bus
 i2c = busio.I2C(board.SCL, board.SDA)
