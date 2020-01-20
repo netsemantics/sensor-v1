@@ -26,7 +26,8 @@ class FileOp:
 			self.writer = csv.writer(self.file,delimiter='\t')
 
 	def write(self, val):
-		self.writer.writerows(val)  #val must be iterable (list of lists?)
+		if not (self.file.closed):
+			self.writer.writerows(val)
 
 	def close_file(self):
 		self.file.close()
@@ -98,20 +99,23 @@ chan15 = AnalogIn(ads4, ADS.P2)
 
 chan_value = [chan01, chan02, chan03, chan04, chan05, chan06, chan07, chan08, chan09, chan10, chan11, chan12, chan13, chan14, chan15]
 
-
-adj_value = [ 1.04438451030322, 0.977557025707482, 1.08750201194372, 1.03005328039686, 1.10133799416433,
-  1.09780935440337, 1.03782247846704, 0.920201153101695, 1.01052194979014, 1.02927945588788,
-  1.01120291535804, 0.981952348918503, 0.909305704015221, 0.775000722236208,  0.98606909530629 ]
+# Currently Adjustment values are not used - use this approach if adjustment values are needed
+#adj_value = [ 1.04438451030322, 0.977557025707482, 1.08750201194372, 1.03005328039686, 1.10133799416433,
+#  1.09780935440337, 1.03782247846704, 0.920201153101695, 1.01052194979014, 1.02927945588788,
+#  1.01120291535804, 0.981952348918503, 0.909305704015221, 0.775000722236208,  0.98606909530629 ]
 
 # Main Loop
 while True:
 	if x == True:
-		lst_output = [[a.value*b for a,b in zip(chan_value,adj_value)]]       #Multiply sensor vals by adjustment vals
+#		lst_output = [[a.value*b for a,b in zip(chan_value,adj_value)]]       #Multiply sensor vals by adjustment vals
+		lst_output = [[a.value for a in chan_value]]
 		lst_output[0].insert(0, datetime.now().strftime("%Y%m%d_%H%M%S_%f"))
 
 		fo.write(lst_output)
 
 		time.sleep(0.3)
+	else:
+		time.sleep(1)
 
 
 #try:
